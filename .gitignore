@@ -1,0 +1,9 @@
+# Dataset
+data/
+~data/README.md
+
+# Pycharm project folder
+.idea/
+
+# Jupyter Notebook
+*.ipynb
