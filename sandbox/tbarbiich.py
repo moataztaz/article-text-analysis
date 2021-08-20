@@ -5,9 +5,12 @@ import pandas
 from spacy.language import Language
 from spacy.matcher import PhraseMatcher, Matcher
 from spacy.tokens import Span, Token, Doc
+import os
 
+project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+data_path = os.path.join(project_path, "data")
 
-with open('C:/news articles/articles1.csv', encoding="utf8") as f:
+with open(os.path.join(data_path, "articles1.csv"), encoding="utf8") as f:
     NEWS1 = pandas.read_csv(f)
 
 nlp = spacy.load("en_core_web_sm")
