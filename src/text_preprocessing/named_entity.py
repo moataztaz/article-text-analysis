@@ -57,7 +57,9 @@ def ner(id,news_dataframe):
     return df
 
 
-print(step_ner(_data_path, 0, 0))
+# Testing area
+if __name__ == '__main__':
+    print(step_ner(_data_path, 0, 0))
 
 
 
