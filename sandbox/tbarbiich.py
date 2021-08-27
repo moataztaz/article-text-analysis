@@ -12,6 +12,8 @@ data_path = os.path.join(project_path, "data")
 
 with open(os.path.join(data_path, "articles1.csv"), encoding="utf8") as f:
     NEWS1 = pandas.read_csv(f)
+    # TODO: replace below with regex detection
+    NEWS1.drop(columns=['Unnamed: 0', ], inplace=True)
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -35,12 +37,12 @@ for entity in doc.ents:
 data = {'entity': entities, 'label': labels}
 df = pandas.DataFrame(data)
 
-print(df)
-
 # for doc, context in nlp.pipe(DATA, as_tuples=True):
 
-def ner(id):
-    content = NEWS1["content"][NEWS1["id"] == id]
+def article_ner(id):
+    list_contents = NEWS1["content"][NEWS1["id"] == id].values
+    assert len(list_contents) == 1
+    content = list_contents[0]
     with nlp.disable_pipes("tagger", "parser", "lemmatizer"):
         doc = nlp(content)
 
@@ -56,5 +58,8 @@ def ner(id):
 
     return df
 
-# print(ner(0))
+
+if __name__ == '__main__':
+    article_index = int(input('Write Article Index :'))
+    print(article_ner(id=article_index))
 
