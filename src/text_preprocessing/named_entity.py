@@ -1,23 +1,29 @@
+import re
+
 import pandas as pd
 import spacy
 import os
+import glob
 
 
 _project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 _data_path = os.path.join(_project_path, "data")
+_dataset_file_regex = r'articles\d*\.csv'
 
 nlp = spacy.load("en_core_web_sm")
 
 
-def step_ner(data_dir, output_dir, output_format='csv'):
+def step_ner(data_dir, output_dir, output_format='csv', limit=None):
     """
     Ap preprocessing step, compute ner for each article in the csv files, reads all csv files in directory
     :param data_dir: input csv files directory
     :param output_dir: output directory
     :param output_format: only csv format is supported
+    :param limit: max number of records to process
     :return: exit code
     """
-    csv_files = os.listdir(data_dir)
+
+    csv_files = [f for f in os.listdir(data_dir) if re.search(_dataset_file_regex, f)]
     frames = []
 
     for file in csv_files:
@@ -26,15 +32,17 @@ def step_ner(data_dir, output_dir, output_format='csv'):
         frames.append(file_news)
 
     NEWS = pd.concat(frames)
-    NEWS_chunk = NEWS.head(3)
+    # if thers is no limit the value is None, however NEWS varible is filtered
+    if limit:
+        NEWS = NEWS.head(limit)
     data = []
 
-    def extract_data(row):
-        ner_row = ner(row["id"], NEWS_chunk)
+    def _extract_data(row):
+        ner_row = ner(row["id"], NEWS)
         for index, entity_row in ner_row.iterrows():
             data.append([int(row["id"]), entity_row["entity"], entity_row["label"]])
 
-    NEWS_chunk.apply(lambda x: extract_data(x), axis=1)
+    NEWS.apply(lambda x: _extract_data(x), axis=1)
 
     step_ner_df = pd.DataFrame(data, columns=['article_id', 'entity', 'entity_label'])
     step_ner_df.to_csv(r'{}\ner_dataframe.csv'.format(output_dir), index=False, header=True)
@@ -62,7 +70,7 @@ def ner(id,news_dataframe):
 
 # Testing area
 if __name__ == '__main__':
-    print(step_ner(_data_path, _data_path))
+    print(step_ner(_data_path, _data_path, limit=3))
 
 
 

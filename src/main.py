@@ -6,10 +6,12 @@ from text_preprocessing.named_entity import step_ner
 _project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 _data_path = os.path.join(_project_path, "data")
 
+
 # pipelines
-def preprocessing_pipeline(data_dir, output_dir):
+def preprocessing_pipeline(data_dir, output_dir, limit=None):
     step_ner(data_dir=data_dir,
-             output_dir=output_dir)
+             output_dir=output_dir,
+             limit=limit)
 
 
 # search
@@ -22,10 +24,11 @@ def search_app(**kwargs):
 if __name__ == "__main__":
     # MODE PREPROCESS OR SEARCH
     MODE = "PREPROCESS"
+    LIMIT = 10
     # CONFIG
     DATA_DIR = _data_path
 
     if MODE == "PREPROCESS":
-        preprocessing_pipeline(data_dir=DATA_DIR)
+        preprocessing_pipeline(data_dir=DATA_DIR, output_dir=DATA_DIR, limit=LIMIT)
     elif MODE == "SEARCH":
         search_app()
