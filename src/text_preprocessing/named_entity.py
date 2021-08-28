@@ -8,6 +8,7 @@ _data_path = os.path.join(_project_path, "data")
 
 nlp = spacy.load("en_core_web_sm")
 
+
 def step_ner(data_dir, output_dir, output_format='csv'):
     """
     Ap preprocessing step, compute ner for each article in the csv files, reads all csv files in directory
@@ -36,6 +37,8 @@ def step_ner(data_dir, output_dir, output_format='csv'):
     NEWS_chunk.apply(lambda x: extract_data(x), axis=1)
 
     step_ner_df = pd.DataFrame(data, columns=['article_id', 'entity', 'entity_label'])
+    step_ner_df.to_csv(r'{}\ner_dataframe.csv'.format(output_dir), index=False, header=True)
+
     return step_ner_df
 
 
@@ -53,13 +56,13 @@ def ner(id,news_dataframe):
 
     data = {'entity': entities, 'label': labels}
     df = pd.DataFrame(data)
-    # faster if it return a dictionnary !!
+    # try with return a dictionnary !!
     return df
 
 
 # Testing area
 if __name__ == '__main__':
-    print(step_ner(_data_path, 0, 0))
+    print(step_ner(_data_path, _data_path))
 
 
 
