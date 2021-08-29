@@ -27,7 +27,7 @@ def search_app(**kwargs):
 if __name__ == "__main__":
     # MODE PREPROCESS OR SEARCH
     MODE = "PREPROCESS"
-    LIMIT = os.getenv('LIMIT', 10)
+    LIMIT = int(os.getenv('LIMIT', 10))
     # CONFIG
     DATA_DIR = _data_path
 
