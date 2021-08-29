@@ -1,6 +1,7 @@
 # imports
 import os
 from text_preprocessing.named_entity import step_ner
+from decorators import timer
 
 # paths config
 _project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -8,6 +9,8 @@ _data_path = os.path.join(_project_path, "data")
 
 
 # pipelines
+
+@timer
 def preprocessing_pipeline(data_dir, output_dir, limit=None):
     step_ner(data_dir=data_dir,
              output_dir=output_dir,
@@ -24,7 +27,7 @@ def search_app(**kwargs):
 if __name__ == "__main__":
     # MODE PREPROCESS OR SEARCH
     MODE = "PREPROCESS"
-    LIMIT = 10
+    LIMIT = os.getenv('LIMIT', 10)
     # CONFIG
     DATA_DIR = _data_path
 

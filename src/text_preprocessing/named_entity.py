@@ -50,7 +50,7 @@ def step_ner(data_dir, output_dir, output_format='csv', limit=None):
     return step_ner_df
 
 
-def ner(id,news_dataframe):
+def ner(id, news_dataframe):
     list_contents = news_dataframe["content"][news_dataframe["id"] == id].values
     assert len(list_contents) == 1
     content = list_contents[0]
