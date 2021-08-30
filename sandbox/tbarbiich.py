@@ -26,7 +26,7 @@ with nlp.disable_pipes("tagger", "parser", "lemmatizer"):
     doc = nlp(content)
 
 # nlp.pipe(NEWS1["content"])
-
+print(doc.ents)
 entities = []
 labels = []
 
