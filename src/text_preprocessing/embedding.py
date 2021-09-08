@@ -2,6 +2,8 @@ import pandas as pd
 import spacy
 import os
 import re
+import json
+import numpy as np
 
 
 _project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -11,7 +13,7 @@ _dataset_file_regex = r'articles\d*\.csv'
 nlp = spacy.load("en_core_web_md")
 
 
-def step_embedding(data_dir, output_dir, input_text, limit=None):
+def step_embedding(data_dir, output_dir, limit=None):
     """
     A preprocessing method that employs embeddings to get a list of tuples describing the similarity of each news
     article to a given text (article Id, similarity)
@@ -30,20 +32,21 @@ def step_embedding(data_dir, output_dir, input_text, limit=None):
     NEWS = pd.concat(frames)
     if limit:
         NEWS = NEWS.head(limit)
+
+    news_tuples = NEWS.filter(['content', 'id'], axis=1).to_records(index=False)
     data = []
 
-    def fill_list(row):
-        data.append([int(row["id"]), similarity_by_id(row["id"], input_text, NEWS)])
+    data.extend([
+        [int(context), np.ndarray.tolist(doc.vector)]
+        for doc, context in nlp.pipe(news_tuples, as_tuples=True)])
 
-    # similarity_list = NEWS.apply(lambda x: similarity_by_id(x["id"], input_text, NEWS), axis=1)
-    NEWS.apply(lambda x: fill_list(x), axis=1)
-    similarity_df = pd.DataFrame(data, columns=["article_id", "similarity_score"])
-    similarity_df.to_csv(r'{}\embedding_dataframe.csv'.format(output_dir), index=False, header=True)
+    with open(os.path.join(output_dir, "embedding_dataframe.json"), "w", encoding="utf8") as json_file:
+        json.dump(data, json_file, sort_keys=True)
 
-    return similarity_df
+    return data
 
 
-def similarity_by_id(id, input_text, news_dataframe):
+def similarity_by_id_test(id, input_text, news_dataframe):
     list_contents = news_dataframe["content"][news_dataframe["id"] == id].values
     assert len(list_contents) == 1
     content = list_contents[0]
@@ -56,3 +59,5 @@ def similarity_by_id(id, input_text, news_dataframe):
 
 # Testing Area:
 
+if __name__ == '__main__':
+    print(step_embedding(_data_path, _data_path, limit=3))

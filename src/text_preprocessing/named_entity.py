@@ -90,7 +90,7 @@ def step_ner_component_test(data_dir, output_dir, output_format='csv', limit=Non
 
 # Testing area
 if __name__ == '__main__':
-    print(step_ner_v4(_data_path, _data_path, limit=3))
+    print(step_ner(_data_path, _data_path, limit=3))
 
 
 

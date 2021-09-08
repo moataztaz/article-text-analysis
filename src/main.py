@@ -12,13 +12,12 @@ _data_path = os.path.join(_project_path, "data")
 # pipelines
 
 @timer
-def preprocessing_pipeline(data_dir, output_dir, input_text, limit=None):
+def preprocessing_pipeline(data_dir, output_dir, limit=None):
     step_ner(data_dir=data_dir,
              output_dir=output_dir,
              limit=limit)
     step_embedding(data_dir=data_dir,
              output_dir=output_dir,
-             input_text=input_text,
              limit=limit)
 
 # search
@@ -37,6 +36,6 @@ if __name__ == "__main__":
     input_text = input('Write similarity check text :')
 
     if MODE == "PREPROCESS":
-        preprocessing_pipeline(data_dir=DATA_DIR, output_dir=DATA_DIR, input_text=input_text, limit=1000)
+        preprocessing_pipeline(data_dir=DATA_DIR, output_dir=DATA_DIR, limit=LIMIT)
     elif MODE == "SEARCH":
         search_app()
