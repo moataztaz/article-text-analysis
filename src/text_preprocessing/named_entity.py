@@ -5,17 +5,21 @@ from spacy.tokens import Doc
 import pandas as pd
 import spacy
 import os
-import glob
 
-
-_project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-_data_path = os.path.join(_project_path, "data")
 _dataset_file_regex = r'articles\d*\.csv'
 
 nlp = spacy.load("en_core_web_sm")
 
 
-def step_ner(data_dir, output_dir, output_format='csv', limit=None):
+def step_ner(data_dir, output_dir, limit=None):
+    """
+    A preprocessing method that employs a small language model to get a dataset of entities and their labels for each
+    article (distinguished by ID)
+    :param data_dir: the directory where the articles data exists
+    :param output_dir: the directory where out output is saved
+    :param limit: the number of entries(articles) to use for the method
+    :return: dataset with attributes ["article Id", "entity", "entity label"]
+    """
 
     csv_files = [f for f in os.listdir(data_dir) if re.search(_dataset_file_regex, f)]
     frames = []
@@ -33,7 +37,6 @@ def step_ner(data_dir, output_dir, output_format='csv', limit=None):
     news_filtered = NEWS.filter(['content', 'id'], axis=1)
     news_tuples = news_filtered.to_records(index=False)
     data = []
-
 
     with nlp.disable_pipes("tagger", "parser", "lemmatizer"):
         data.extend([
@@ -90,6 +93,9 @@ def step_ner_component_test(data_dir, output_dir, output_format='csv', limit=Non
 
 # Testing area
 if __name__ == '__main__':
+    _project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    _data_path = os.path.join(_project_path, "data")
+
     print(step_ner(_data_path, _data_path, limit=3))
 
 

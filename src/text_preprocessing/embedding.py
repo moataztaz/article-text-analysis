@@ -6,8 +6,6 @@ import json
 import numpy as np
 
 
-_project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-_data_path = os.path.join(_project_path, "data")
 _dataset_file_regex = r'articles\d*\.csv'
 
 nlp = spacy.load("en_core_web_md")
@@ -15,12 +13,14 @@ nlp = spacy.load("en_core_web_md")
 
 def step_embedding(data_dir, output_dir, limit=None):
     """
-    A preprocessing method that employs embeddings to get a list of tuples describing the similarity of each news
-    article to a given text (article Id, similarity)
-    :param data_dir: input csv files directory
-    :param input_text: input text to compare similarity with
-    :return:
+    A preprocessing method that employs a larger language model to get a list of articles(distinguished by ID) and their
+    corresponding vector.
+    :param data_dir: the directory where the articles data exists
+    :param output_dir: the directory where our output is saved
+    :param limit: the number of entries(articles) to use for the method
+    :return: list of attributes ["article Id", "article vector"]
     """
+
     csv_files = [f for f in os.listdir(data_dir) if re.search(_dataset_file_regex, f)]
     frames = []
 
@@ -60,4 +60,7 @@ def similarity_by_id_test(id, input_text, news_dataframe):
 # Testing Area:
 
 if __name__ == '__main__':
+    _project_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    _data_path = os.path.join(_project_path, "data")
+
     print(step_embedding(_data_path, _data_path, limit=3))
